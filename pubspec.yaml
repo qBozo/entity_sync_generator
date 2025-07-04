@@ -5,13 +5,13 @@ author:
 homepage:
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   entity_sync:
     git:
-      url: https://github.com/anhphamduy/entity_sync
-#    path: ../entity_sync
+      url: https://github.com/qBozo/entity_sync
+      ref: dart3-fixes
   analyzer: ">=0.40.0 <=2.1.0"
 
   source_gen: ^0.9.4
