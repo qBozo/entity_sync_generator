@@ -12,10 +12,15 @@ dependencies:
     git:
       url: https://github.com/qBozo/entity_sync
       ref: dart3-fixes
-  analyzer: ^3.0.0
+  analyzer: ^5.0.0
 
   source_gen: ^1.2.2
   build: ^2.4.1
 #
-#dev_dependencies:
+dev_dependencies:
 #  test: ^1.16.5
+  build_runner: ^2.4.8
+  source_gen: ^1.2.2
+
+dependency_overrides:
+  file: ^7.0.1

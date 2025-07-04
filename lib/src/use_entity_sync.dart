@@ -6,17 +6,16 @@ Builder useEntitySyncBuilder(BuilderOptions options) {
 }
 
 class UseEntitySyncGenerator extends GeneratorForAnnotation<UseEntitySync> {
-  Iterable<ParameterElement> requiredPositionalArguments = [];
-  Iterable<ParameterElement> namedArguments = [];
-  Element baseElement;
-  Element element;
-  Map<String, DartType> fields;
-  Iterable<DartObject> serializableFields;
-  DartObject keyField;
-  DartObject remoteKeyField;
-  DartObject flagField;
-
-  StringBuffer sourceBuilder;
+  late Iterable<ParameterElement> requiredPositionalArguments;
+  late Iterable<ParameterElement> namedArguments;
+  late Element baseElement;
+  late Element element;
+  late Map<String, DartType> fields;
+  late Iterable<DartObject> serializableFields;
+  DartObject? keyField;
+  DartObject? remoteKeyField;
+  DartObject? flagField;
+  late StringBuffer sourceBuilder;
 
   @override
   generateForAnnotatedElement(
@@ -25,7 +24,7 @@ class UseEntitySyncGenerator extends GeneratorForAnnotation<UseEntitySync> {
     final visitor = ModelVisitor();
     this.element = element;
 
-    baseElement = annotation.read('baseClass').typeValue.element;
+    baseElement = annotation.read('baseClass').typeValue.element!;
     baseElement.visitChildren(visitor);
 
     requiredPositionalArguments =
@@ -127,7 +126,7 @@ class UseEntitySyncGenerator extends GeneratorForAnnotation<UseEntitySync> {
     if (keyField == null) {
       sourceBuilder.writeln('null');
     } else {
-      generateSerializableField(keyField);
+      generateSerializableField(keyField!);
     }
     sourceBuilder.writeln(';');
 
@@ -135,7 +134,7 @@ class UseEntitySyncGenerator extends GeneratorForAnnotation<UseEntitySync> {
     if (remoteKeyField == null) {
       sourceBuilder.writeln('null');
     } else {
-      generateSerializableField(remoteKeyField);
+      generateSerializableField(remoteKeyField!);
     }
     sourceBuilder.writeln(';');
 
@@ -143,7 +142,7 @@ class UseEntitySyncGenerator extends GeneratorForAnnotation<UseEntitySync> {
     if (flagField == null) {
       sourceBuilder.writeln('null');
     } else {
-      generateSerializableField(flagField);
+      generateSerializableField(flagField!);
     }
     sourceBuilder.writeln(';');
 
@@ -190,40 +189,40 @@ class UseEntitySyncGenerator extends GeneratorForAnnotation<UseEntitySync> {
     sourceBuilder.writeln("];");
 
     final methods = <String>[];
-    // write validation methods
-    serializableFields.forEach((element) {
-      String name = ConstantReader(element).read('name').stringValue;
-      name = "${name[0].toUpperCase()}${name.substring(1)}";
+serializableFields.forEach((element) {
+  final reader = ConstantReader(element);
+  String name = reader.read('name').stringValue;
+  name = "${name[0].toUpperCase()}${name.substring(1)}";
 
-      String returnType;
-      switch (element.type.element.displayName) {
-        case "StringField":
-          returnType = "String";
-          break;
-        case "IntegerField":
-          returnType = "int";
-          break;
-        case "DateTimeField":
-          returnType = "DateTime";
-          break;
-        case "BoolField":
-          returnType = "bool";
-          break;
-        case "DateField":
-          returnType = "DateTime";
-          break;
-        case "DoubleField":
-          returnType = "double";
-          break;
-      }
+  String returnType;
+  switch (element.type?.element?.displayName) {
+    case "StringField":
+      returnType = "String";
+      break;
+    case "IntegerField":
+      returnType = "int";
+      break;
+    case "DateTimeField":
+    case "DateField":
+      returnType = "DateTime";
+      break;
+    case "BoolField":
+      returnType = "bool";
+      break;
+    case "DoubleField":
+      returnType = "double";
+      break;
+    default:
+      returnType = "dynamic";
+  }
 
-      final methodName = "validate$name";
-      methods.add(methodName);
+  final methodName = "validate$name";
+  methods.add(methodName);
 
-      sourceBuilder.writeln("""$returnType $methodName($returnType value) {
-            return value;
-          }""");
-    });
+  sourceBuilder.writeln("""$returnType $methodName($returnType value) {
+    return value;
+  }""");
+});
 
     // write toMap method
     sourceBuilder.writeln("@override");
@@ -281,20 +280,15 @@ class UseEntitySyncGenerator extends GeneratorForAnnotation<UseEntitySync> {
   }
 
   void generateSerializableField(DartObject element) {
-    final name = ConstantReader(element).read('name').stringValue;
+    final reader = ConstantReader(element);
 
-    final constantReaderPrefix = ConstantReader(element).read('prefix');
-    String prefix =
-        constantReaderPrefix.isNull ? "" : constantReaderPrefix.stringValue;
+    final name = reader.read('name').stringValue;
+    final prefix = reader.read('prefix').isNull ? '' : reader.read('prefix').stringValue;
+    final source = reader.read('source').isNull ? name : reader.read('source').stringValue;
+    final type = element.type?.element?.displayName ?? 'UnknownField';
 
-    final constantReaderSource = ConstantReader(element).read('source');
-    String source =
-        constantReaderSource.isNull ? name : constantReaderSource.stringValue;
-
-    final type = element.type.element.displayName;
-
-    sourceBuilder.write(
-      "$type('$name' ${prefix.isEmpty ? "" : ",prefix: '$prefix'"}, source: '$source')",
-    );
+    final prefixArg = prefix.isEmpty ? '' : ",prefix: '$prefix'";
+    sourceBuilder.write("$type('$name'$prefixArg, source: '$source')");
   }
+
 }
