@@ -14,8 +14,8 @@ dependencies:
       ref: dart3-fixes
   analyzer: ">=0.40.0 <=2.1.0"
 
-  source_gen: ^0.9.4
-  build: ^1.6.0
+  source_gen: ^1.2.2
+  build: ^2.4.1
 #
 #dev_dependencies:
 #  test: ^1.16.5
