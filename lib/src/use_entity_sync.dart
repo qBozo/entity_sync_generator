@@ -32,11 +32,9 @@ generateForAnnotatedElement(
   namedArguments = visitor.parameters.where((element) => element.isNamed);
   fields = visitor.fields;
 
-  serializableFields = annotation.read('fields').listValue.where((obj) {
+  serializableFields = annotation.read('fields').listValue.whereType<DartObject>().where((obj) {
     final type = obj.type;
-    return type != null &&
-           type.element != null &&
-           type.element!.displayName != null;
+    return type != null && type.element != null;
   });
 
   if (!annotation.read('keyField').isNull) {
