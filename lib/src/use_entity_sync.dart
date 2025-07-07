@@ -192,43 +192,42 @@ generateForAnnotatedElement(
     sourceBuilder.writeln("];");
 
     final methods = <String>[];
-serializableFields.forEach((element) {
-  final reader = ConstantReader(element);
-  String name = reader.read('name').stringValue;
-  name = "${name[0].toUpperCase()}${name.substring(1)}";
+  serializableFields.forEach((element) {
+    final reader = ConstantReader(element);
+    String name = reader.read('name').stringValue;
+    name = "${name[0].toUpperCase()}${name.substring(1)}";
 
-  String returnType;
-  final typeElement = element.type?.element;
-  final displayName = typeElement is ClassElement ? typeElement.displayName : null;
+    String returnType = "dynamic"; // default fallback
+    final typeElement = element.type?.element;
+    if (typeElement is ClassElement) {
+      switch (typeElement.displayName) {
+        case "StringField":
+          returnType = "String";
+          break;
+        case "IntegerField":
+          returnType = "int";
+          break;
+        case "DateTimeField":
+        case "DateField":
+          returnType = "DateTime";
+          break;
+        case "BoolField":
+          returnType = "bool";
+          break;
+        case "DoubleField":
+          returnType = "double";
+          break;
+      }
+    }
 
-  switch (displayName) {
-    case "StringField":
-      returnType = "String";
-      break;
-    case "IntegerField":
-      returnType = "int";
-      break;
-    case "DateTimeField":
-    case "DateField":
-      returnType = "DateTime";
-      break;
-    case "BoolField":
-      returnType = "bool";
-      break;
-    case "DoubleField":
-      returnType = "double";
-      break;
-    default:
-      returnType = "dynamic";
-  }
+    final methodName = "validate$name";
+    methods.add(methodName);
 
-  final methodName = "validate$name";
-  methods.add(methodName);
+    sourceBuilder.writeln("""$returnType $methodName($returnType value) {
+      return value;
+    }""");
+  });
 
-  sourceBuilder.writeln("""$returnType $methodName($returnType value) {
-    return value;
-  }""");
-});
 
     // write toMap method
     sourceBuilder.writeln("@override");
