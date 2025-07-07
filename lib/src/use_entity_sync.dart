@@ -181,9 +181,10 @@ class UseEntitySyncGenerator extends GeneratorForAnnotation<UseEntitySync> {
       name = "${name[0].toUpperCase()}${name.substring(1)}";
 
       String returnType = "dynamic";
-      final typeElement = element.type?.element;
-      if (typeElement is ClassElement) {
-        switch (typeElement.displayName) {
+      final type = element.toTypeValue();
+      if (type is InterfaceType) {
+        final displayName = type.element.displayName;
+        switch (displayName) {
           case "StringField":
             returnType = "String";
             break;
