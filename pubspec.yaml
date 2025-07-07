@@ -1,7 +1,6 @@
 name: entity_sync_generator
-description: A new Flutter package project.
+description: Code generator for the entity_sync package.
 version: 0.0.1
-author:
 homepage:
 
 environment:
@@ -13,12 +12,10 @@ dependencies:
       url: https://github.com/qBozo/entity_sync
       ref: dart3-fixes
   analyzer: ">=4.0.0 <7.0.0"
-
-  source_gen: ^1.2.2
   build: ^2.4.1
-#
+  source_gen: ^1.2.2
+
 dev_dependencies:
-#  test: ^1.16.5
   build_runner: ^2.4.8
   source_gen: ^1.2.2
 
