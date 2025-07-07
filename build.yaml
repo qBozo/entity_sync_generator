@@ -1,10 +1,13 @@
 targets:
   $default:
+    sources:
+      - lib/**
+      - test/**
     builders:
       entity_sync_generator|use_entity_sync_builder:
         enabled: true
       build_resolvers|transitive_digests:
-        enabled: false 
+        enabled: false
 
 builders:
   use_entity_sync_builder:
