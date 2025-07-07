@@ -12,11 +12,10 @@ targets:
 
 builders:
   use_entity_sync_builder:
-    target: ":entity_sync_generator"
     import: "package:entity_sync_generator/entity_sync_generator.dart"
     builder_factories: ["useEntitySyncBuilder"]
     build_extensions: { ".dart": [".use_entity_sync_builder.g.part"] }
     auto_apply: none 
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]
-    applies_builders: []
+
