@@ -4,6 +4,10 @@ builders:
     import: "package:entity_sync_generator/entity_sync_generator.dart"
     builder_factories: ["useEntitySyncBuilder"]
     build_extensions: { ".dart": [".use_entity_sync_builder.g.part"] }
-    auto_apply: none
+    auto_apply: none  
     build_to: cache
     applies_builders: ["source_gen|combining_builder"]
+    defaults:
+      generate_for:
+        include:
+          - lib/core/services/entity_sync.dart
