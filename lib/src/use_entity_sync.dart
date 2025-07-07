@@ -18,43 +18,48 @@ class UseEntitySyncGenerator extends GeneratorForAnnotation<UseEntitySync> {
   late StringBuffer sourceBuilder;
 
   @override
-  generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) {
-    sourceBuilder = StringBuffer();
-    final visitor = ModelVisitor();
-    this.element = element;
+generateForAnnotatedElement(
+    Element element, ConstantReader annotation, BuildStep buildStep) {
+  sourceBuilder = StringBuffer();
+  final visitor = ModelVisitor();
+  this.element = element;
 
-    baseElement = annotation.read('baseClass').typeValue.element!;
-    baseElement.visitChildren(visitor);
+  baseElement = annotation.read('baseClass').typeValue.element!;
+  baseElement.visitChildren(visitor);
 
-    requiredPositionalArguments =
-        visitor.parameters.where((element) => element.isRequiredPositional);
-    namedArguments = visitor.parameters.where((element) => element.isNamed);
-    fields = visitor.fields;
+  requiredPositionalArguments =
+      visitor.parameters.where((element) => element.isRequiredPositional);
+  namedArguments = visitor.parameters.where((element) => element.isNamed);
+  fields = visitor.fields;
 
-    serializableFields = annotation.read('fields').listValue;
+  serializableFields = annotation.read('fields').listValue.where((obj) {
+    final type = obj.type;
+    return type != null &&
+           type.element != null &&
+           type.element!.displayName != null;
+  });
 
-    if (!annotation.read('keyField').isNull) {
-      keyField = annotation.read('keyField').objectValue;
-    }
-    if (!annotation.read('remoteKeyField').isNull) {
-      remoteKeyField = annotation.read('remoteKeyField').objectValue;
-    }
-    if (!annotation.read('flagField').isNull) {
-      flagField = annotation.read('flagField').objectValue;
-    }
-
-    // ignoring dart compiler warnings
-    sourceBuilder.writeln(
-      '// ignore_for_file: non_constant_identifier_names'
-    );
-    generateProxyClass();
-    generateSerializerClass();
-    generateFactoryClass();
-    generateEntitySyncClass();
-
-    return sourceBuilder.toString();
+  if (!annotation.read('keyField').isNull) {
+    keyField = annotation.read('keyField').objectValue;
   }
+  if (!annotation.read('remoteKeyField').isNull) {
+    remoteKeyField = annotation.read('remoteKeyField').objectValue;
+  }
+  if (!annotation.read('flagField').isNull) {
+    flagField = annotation.read('flagField').objectValue;
+  }
+
+  sourceBuilder.writeln(
+    '// ignore_for_file: non_constant_identifier_names'
+  );
+  generateProxyClass();
+  generateSerializerClass();
+  generateFactoryClass();
+  generateEntitySyncClass();
+
+  return sourceBuilder.toString();
+}
+
 
   void generateProxyClass() {
     // open class name
