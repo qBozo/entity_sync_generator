@@ -198,7 +198,10 @@ serializableFields.forEach((element) {
   name = "${name[0].toUpperCase()}${name.substring(1)}";
 
   String returnType;
-  switch (element.type?.element?.displayName) {
+  final typeElement = element.type?.element;
+  final displayName = typeElement is ClassElement ? typeElement.displayName : null;
+
+  switch (displayName) {
     case "StringField":
       returnType = "String";
       break;
