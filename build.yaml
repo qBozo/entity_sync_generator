@@ -6,8 +6,6 @@ targets:
     builders:
       entity_sync_generator|use_entity_sync_builder:
         enabled: true
-      build_resolvers|transitive_digests:
-        enabled: false
 
 builders:
   use_entity_sync_builder:
